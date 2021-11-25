@@ -18,6 +18,15 @@ locals {
     allow_rebase_merge     = true
     allow_auto_merge       = false
     delete_branch_on_merge = true
+
+    branches       = ["dev"]
+    default_branch = "master"
+
+    issue_labels = {
+      bug            = "dc322f"
+      improvement    = "268bd2"
+      infrastructure = "6c71c4"
+    }
   }
 
   default_branch_pro = [
@@ -26,7 +35,27 @@ locals {
 
       require_signed_commits  = false
       required_linear_history = false
-      enforce_admins          = true
+      enforce_admins          = false
+
+      allows_force_pushes = false
+      allows_deletions    = false
+
+      required_pull_request_reviews = {
+        required_approving_review_count = 1
+        dismiss_stale_reviews           = true
+        require_code_owner_reviews      = true
+      }
+
+      required_status_checks = {
+        strict = true
+      }
+    },
+    {
+      pattern = "dev"
+
+      require_signed_commits  = false
+      required_linear_history = false
+      enforce_admins          = false
 
       allows_force_pushes = false
       allows_deletions    = false
