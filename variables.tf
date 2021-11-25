@@ -11,6 +11,18 @@ variable "github_org" {
   default = "enterthetag"
 }
 
+variable "secret_pypi_token" {
+  description = "PyPI token"
+  type        = string
+  sensitive   = true
+}
+
+variable "secret_semgrep_token" {
+  description = "Semgrep token"
+  type        = string
+  sensitive   = true
+}
+
 variable "members" {
   description = "Organisation members"
 
@@ -43,6 +55,8 @@ variable "repositories" {
 
   default = {
     milton = {
+      description = "Framework for building secure, privilege-separated UNIX daemons."
+
       gitignore_template = "Python"
       topics             = ["python", "framework", "services", "security", "privsep"]
 
@@ -53,6 +67,8 @@ variable "repositories" {
     }
 
     anjana = {
+      description = "Framework for service observability."
+
       gitignore_template = "Python"
       topics             = ["python", "framework", "logging", "metrics", "tracing"]
 
@@ -63,6 +79,8 @@ variable "repositories" {
     }
 
     aleph = {
+      description = "Framework for Pythonic microservices."
+
       gitignore_template = "Python"
       topics             = ["python", "framework", "microservices"]
 

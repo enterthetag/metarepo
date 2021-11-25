@@ -1,8 +1,9 @@
 resource "github_repository" "repositories" {
   for_each = local.repositories
 
-  name   = each.key
-  topics = each.value.topics
+  name        = each.key
+  description = each.value.description
+  topics      = each.value.topics
 
   visibility   = each.value.visibility
   has_issues   = each.value.has_issues
@@ -18,6 +19,27 @@ resource "github_repository" "repositories" {
   allow_rebase_merge     = each.value.allow_rebase_merge
   allow_auto_merge       = each.value.allow_auto_merge
   delete_branch_on_merge = each.value.delete_branch_on_merge
+}
+
+resource "github_branch" "branches" {
+  for_each = {
+    for branch_info in local.repository_branches :
+    "${branch_info.repository}-${branch_info.branch}" => branch_info
+  }
+
+  repository    = each.value.repository
+  branch        = each.value.branch
+  source_branch = "master"
+}
+
+resource "github_branch_default" "default_branches" {
+  for_each = {
+    for default_branch in local.repository_default_branches :
+    "${default_branch.repository}-${default_branch.branch}" => default_branch
+  }
+
+  repository = each.value.repository
+  branch     = each.value.branch
 }
 
 resource "github_team_repository" "team_repositories" {
@@ -56,4 +78,15 @@ resource "github_branch_protection" "branch_protections" {
   required_status_checks {
     strict = each.value.required_status_checks.strict
   }
+}
+
+resource "github_issue_label" "issue_labels" {
+  for_each = {
+    for label in local.repository_issue_labels :
+    "${label.repository}-${label.name}" => label
+  }
+
+  repository = each.value.repository
+  name       = each.value.name
+  color      = each.value.color
 }
