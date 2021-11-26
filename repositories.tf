@@ -29,7 +29,7 @@ resource "github_branch" "branches" {
 
   repository    = each.value.repository
   branch        = each.value.branch
-  source_branch = "master"
+  source_branch = each.value.source_branch
 }
 
 resource "github_branch_default" "default_branches" {
