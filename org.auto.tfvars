@@ -13,6 +13,12 @@ teams = {
   }
 }
 
+allowed_actions = [
+  "returntocorp/semgrep-action@v1",
+  "hashicorp/setup-terraform@v1",
+  "terraform-linters/setup-tflint@v1",
+]
+
 repositories = {
   # The Alef project.
   milton = {
