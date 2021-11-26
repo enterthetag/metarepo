@@ -52,6 +52,11 @@ variable "teams" {
   }
 }
 
+variable "allowed_actions" {
+  description = "GitHub Actions allowed organisation-wide"
+  type        = list(string)
+}
+
 variable "repositories" {
   description = "Organisation repositories"
 
