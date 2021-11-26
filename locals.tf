@@ -36,8 +36,9 @@ locals {
   repository_branches = flatten([
     for repo, config in local.repositories : [
       for branch in config.branches : {
-        repository = repo
-        branch     = branch
+        repository    = repo
+        branch        = branch
+        source_branch = config.default_branch
       }
     ]
   ])
