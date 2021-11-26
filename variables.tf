@@ -7,8 +7,6 @@ variable "github_api_token" {
 variable "github_org" {
   description = "GitHub organisation"
   type        = string
-
-  default = "enterthetag"
 }
 
 variable "secret_pypi_token" {
@@ -25,69 +23,45 @@ variable "secret_semgrep_token" {
 
 variable "members" {
   description = "Organisation members"
+  type        = map(string)
 
-  default = {
-    # member  = "role"
+  validation {
+    condition = alltrue([
+      for role in var.members :
+      contains(["member", "admin"], role)
+    ])
+    error_message = "All organisation members must be either 'member' or 'admin'."
   }
 }
 
 variable "teams" {
   description = "Organisation team list"
+  type = map(object({
+    description = string
+    members     = map(string)
+  }))
 
-  default = {
-    systems = {
-      description = "Systems Group"
-      members = {
-        # member  = "role"
-      }
-    },
-    dev = {
-      description = "Development Group"
-      members = {
-        # member  = "role"
-      }
-    }
+  validation {
+    condition = alltrue(flatten([
+      for team in var.teams : [
+        for role in team.members :
+        contains(["member", "maintainer"], role)
+      ]
+    ]))
+    error_message = "All team members must be either 'member' or 'maintainer'."
   }
 }
 
 variable "repositories" {
   description = "Organisation repositories"
 
-  default = {
-    milton = {
-      description = "Framework for building secure, privilege-separated UNIX daemons."
-
-      gitignore_template = "Python"
-      topics             = ["python", "framework", "services", "security", "privsep"]
-
-      teams = {
-        systems = "maintain"
-        dev     = "push"
-      }
-    }
-
-    anjana = {
-      description = "Framework for service observability."
-
-      gitignore_template = "Python"
-      topics             = ["python", "framework", "logging", "metrics", "tracing"]
-
-      teams = {
-        systems = "maintain"
-        dev     = "push"
-      }
-    }
-
-    aleph = {
-      description = "Framework for Pythonic microservices."
-
-      gitignore_template = "Python"
-      topics             = ["python", "framework", "microservices"]
-
-      teams = {
-        systems = "maintain"
-        dev     = "maintain"
-      }
-    }
+  validation {
+    condition = alltrue(flatten([
+      for repo in var.repositories : [
+        for perm in repo.teams :
+        contains(["pull", "triage", "push", "maintain", "admin"], perm)
+      ]
+    ]))
+    error_message = "All repository teams must have one of: pull, triage, push, maintain, or admin."
   }
 }
